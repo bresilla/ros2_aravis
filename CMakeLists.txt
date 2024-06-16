@@ -27,13 +27,10 @@ include_directories(
   ${std_msgs_INCLUDE_DIRS}
 )
 
-find_package(PkgConfig REQUIRED)                                                                                                            
-                                                                                                                                            
-set(DEPENDENCIES "aravis-0.8")                                                                                                            
-pkg_check_modules(DEPS REQUIRED IMPORTED_TARGET ${DEPENDENCIES})   
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-
+find_package(Aravis REQUIRED)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -56,7 +53,7 @@ set(ros_dependencies
   sensor_msgs
   cv_bridge
   image_transport
-  
+  Aravis
   OpenCV
   fmt
 )
@@ -71,25 +68,15 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 )
 rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
-# add_executable(camera_discover src/CameraIn.cpp)
-# ament_target_dependencies(camera_discover ${ros_dependencies})
-# target_link_libraries(camera_discover "${cpp_typesupport_target}")
+add_executable(pack src/main.cpp)
+ament_target_dependencies(pack ${ros_dependencies})
+target_link_libraries(pack "${cpp_typesupport_target}")
 
 
-install(
-    DIRECTORY include/
-    DESTINATION include
-)
-
-install(
-    DIRECTORY config
-    DESTINATION share/${PROJECT_NAME}
-)
-
-install(
-    DIRECTORY launch
-    DESTINATION share/${PROJECT_NAME}
-)
+install(DIRECTORY include/ DESTINATION include)
+install(DIRECTORY cmake DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY config DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 
 
 ament_package()

@@ -32,6 +32,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 find_package(Aravis REQUIRED)
 find_package(GLIB REQUIRED)
+find_package(GStreamer REQUIRED)
+
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -72,8 +74,12 @@ rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typ
 
 add_executable(pack src/main.cpp)
 ament_target_dependencies(pack ${ros_dependencies})
-target_link_libraries(pack "${cpp_typesupport_target}")
+# target_link_libraries(pack "${cpp_typesupport_target}")
 
+install(TARGETS
+  pack
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 install(DIRECTORY include/ DESTINATION include)
 install(DIRECTORY cmake DESTINATION share/${PROJECT_NAME})

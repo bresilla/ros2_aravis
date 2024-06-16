@@ -31,6 +31,7 @@ include_directories(
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 find_package(Aravis REQUIRED)
+find_package(GLIB REQUIRED)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -53,6 +54,7 @@ set(ros_dependencies
   sensor_msgs
   cv_bridge
   image_transport
+  GLIB
   Aravis
   OpenCV
   fmt

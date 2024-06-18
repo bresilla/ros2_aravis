@@ -1,12 +1,10 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16...3.27)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 project(ros2_aravis)
 
-# Default to C99
-if(NOT CMAKE_C_STANDARD)
-  set(CMAKE_C_STANDARD 99)
-endif()
 
-# Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
 endif()
@@ -20,6 +18,13 @@ endif()
 # FetchContent_Declare(rerun_sdk URL
 #     https://github.com/rerun-io/rerun/releases/latest/download/rerun_cpp_sdk.zip)
 # FetchContent_MakeAvailable(rerun_sdk)
+
+# include(FetchContent)
+# FetchContent_Declare(fmt
+#   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+#   GIT_TAG master
+# )
+# FetchContent_MakeAvailable(fmt)
 
 include_directories(
   include
@@ -44,8 +49,10 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
-find_package(fmt REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
+
+# find_package(rerun_sdk REQUIRED)
+# find_package(fmt REQUIRED)
 
 set(ros_dependencies
   rclcpp
@@ -56,10 +63,11 @@ set(ros_dependencies
   sensor_msgs
   cv_bridge
   image_transport
+  # fmt
+  # rerun_sdk
   GLIB
   Aravis
   OpenCV
-  fmt
 )
 
 
@@ -72,9 +80,18 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 )
 rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
-add_executable(pack src/main.cpp)
+
+add_library(Camera src/Camera.cpp)
+ament_target_dependencies(Camera ${ros_dependencies})
+
+add_executable(pack 
+  src/Camera.cpp
+  src/main.cpp)
 ament_target_dependencies(pack ${ros_dependencies})
-# target_link_libraries(pack "${cpp_typesupport_target}")
+target_link_libraries(pack "${cpp_typesupport_target}")
+
+# target_link_libraries(pack Camera)
+
 
 install(TARGETS
   pack

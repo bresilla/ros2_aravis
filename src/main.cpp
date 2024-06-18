@@ -1,16 +1,26 @@
 #include <iostream>
 #include <aravis-0.8/arv.h>
+#include "ros2_aravis/Camera.hpp"
 
 
 int main(int argc, char **argv){
     arv_update_device_list();
+
+    const char *serial;
     //get num devices
     int num_devices = arv_get_n_devices();
     for(unsigned int i = 0; i < num_devices; i++){
         std::cout << "Device: " << arv_get_device_id(i) << std::endl;
+        std::cout << "ID: " << arv_get_device_id(i) << std::endl;
         std::cout << "Physical ID: " << arv_get_device_physical_id(i) << std::endl;
         std::cout << "Address: " << arv_get_device_address(i) << std::endl;
         std::cout << "Vendor: " << arv_get_device_vendor(i) << std::endl;
+        std::cout << "Manufacturer Info: " << arv_get_device_manufacturer_info(i) << std::endl;
+        std::cout << "Model: " << arv_get_device_model(i) << std::endl;
+        std::cout << "Serial Number: " << arv_get_device_serial_nbr(i) << std::endl;
+        std::cout << "Protocol: " << arv_get_device_protocol(i) << std::endl;
+
+        std::cout << "Interface ID: " << arv_get_interface_id(i) << std::endl;
 
         const char *device_id = arv_get_device_id(i);
         ArvDevice *device = arv_open_device(device_id, NULL);
@@ -20,14 +30,15 @@ int main(int argc, char **argv){
             return 1;
         }
 
-        ArvGc *gc = arv_device_get_genicam(device);
-
-        if(gc == NULL){
-            std::cerr << "Failed to get Genicam" << std::endl;
-            return 1;
-        }
+        serial = arv_get_device_serial_nbr(i);
         
     }
+    // cam::Camera cam = cam::Camera(serial, false);
+
+    // cam.start_stream(50);
+    // for(int i = 0; i < 100; i++){
+    //     std::cout << "Frame: " << i << std::endl;
+    // }
 
 
 }
